@@ -1,0 +1,26 @@
+@import "~@mui/material/styles";
+
+$primary: #1976d2;
+$secondary: #dc004e;
+
+.ticket-list {
+  display: grid;
+  gap: 1rem;
+  padding: 2rem;
+
+  .ticket-card {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: box-shadow 0.3s;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .priority-high {
+      color: #d32f2f;
+      font-weight: bold;
+    }
+  }
+}
