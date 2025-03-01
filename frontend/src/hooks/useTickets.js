@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import api from "../services/api";
 import useApi from "./useApi";
 
 export default function useTickets() {
@@ -19,5 +18,9 @@ export default function useTickets() {
     fetchTickets();
   }, [user]);
 
-  return { tickets: data || [], error, loading };
+  return {
+    tickets: data || [],
+    error,
+    loading,
+  };
 }
