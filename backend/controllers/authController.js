@@ -61,3 +61,55 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie("refreshToken", refreshToken, cookieOptions)
     .json({ success: true, token });
 };
+
+exports.requestPasswordReset = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  const resetToken = user.getResetPasswordToken();
+  await user.save({ validateBeforeSave: false });
+
+  const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+  await sendEmail({
+    email: user.email,
+    subject: "Password Reset Request",
+    html: `Click <a href="${resetUrl}">here</a> to reset your password`,
+  });
+
+  res.status(200).json({ success: true });
+});
+
+exports.confirmPasswordReset = asyncHandler(async (req, res) => {
+  const resetToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken: resetToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
+});
+
+exports.verifyEmail = asyncHandler(async (req, res) => {
+  const verificationToken = req.params.token;
+  
+  const user = await User.findOne({
+    verificationToken,
+    verificationExpire: { $gt: Date.now() }
+  });
+
+  user.verified = true;
+  user.verificationToken = undefined;
+  user.verificationExpire = undefined;
+  await user.save();
+
+  res.redirect(`${process.env.CLIENT_URL}/login?verified=true`);
+});

@@ -55,3 +55,23 @@ exports.assignTicket = asyncHandler(async (req, res) => {
 
   res.status(200).json({ success: true, data: ticket });
 });
+
+exports.getTickets = asyncHandler(async (req, res) => {
+  const { status, priority, createdAfter, createdBefore } = req.query;
+
+  const filter = {};
+  if (status) filter.status = { $in: status.split(",") };
+  if (priority) filter.priority = { $in: priority.split(",") };
+  if (createdAfter && createdBefore) {
+    filter.createdAt = {
+      $gte: new Date(createdAfter),
+      $lte: new Date(createdBefore),
+    };
+  }
+
+  const tickets = await Ticket.find(filter)
+    .sort("-createdAt")
+    .populate("createdBy assignedTo");
+
+  res.status(200).json({ success: true, data: tickets });
+});
