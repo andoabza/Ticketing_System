@@ -1,22 +1,17 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
-const auth = (roles = []) => (req, res, next) => {
-	  const token = req.header('x-auth-token');
-	  
-	  if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
+dotenv.config();
 
-	  try {
-		      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		      req.user = decoded.user;
-		      
-		      if (roles.length && !roles.includes(req.user.role)) {
-			            return res.status(403).json({ message: 'Unauthorized role' });
-			          }
-		      
-		      next();
-		    } catch (err) {
-			        res.status(401).json({ message: 'Token is not valid' });
-			      }
+const auth = async (req, res, next) => {
+  try {
+    const token = req.header("Authorization").replace("Bearer ", "");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (e) {
+    res.status(401).send({ error: "Please authenticate" });
+  }
 };
 
 module.exports = auth;

@@ -1,17 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const auth = require('../middleware/auth');
-const Ticket = require('../models/Ticket');
+const ticketsController = require("../controllers/tickets");
+const auth = require("../middleware/auth");
+const role = require("../middleware/role");
 
-// Create ticket (Customer)
-router.post('/', auth(['customer', 'admin']), async (req, res) => {
-   // Ticket creation logic
-});
-
-
-// Get all tickets (Admin/Agent)
-router.get('/', auth(['admin', 'agent']), async (req, res) => {
-     // Fetch tickets based on role
-});
+router.post("/", auth, ticketsController.createTicket);
+router.get("/", auth, ticketsController.getTickets);
+router.put("/:id/assign", auth, role("admin"), ticketsController.assignTicket);
+router.put("/:id/status", auth, ticketsController.updateTicketStatus);
+router.delete("/:id", auth, ticketsController.deleteTicket);
 
 module.exports = router;
