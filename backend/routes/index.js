@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { protect, authorize, csrfProtection } = require("../middleware/auth");
 const { securityHeaders } = require("../middleware/security");
 const { uploadFiles } = require("../utils/fileUpload");
+const { authController } = require("../controllers/authController");
 
 router.use(securityHeaders);
 

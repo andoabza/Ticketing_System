@@ -1,7 +1,8 @@
+const asyncHandler = require('express-async-handler');
 const sendEmail = require("../utils/email");
 const generateToken = require("../utils/generateToken");
 
-exports.register = asyncHandler(async (req, res) => {
+exports.register = asyncHandler( async(req, res) => {
   const { name, email, password, role } = req.body;
 
   const user = await User.create({ name, email, password, role });
@@ -24,7 +25,8 @@ exports.register = asyncHandler(async (req, res) => {
   sendTokenResponse(user, 201, res);
 });
 
-exports.login = asyncHandler(async (req, res) => {
+exports.login = function asyncHandler() {
+  return async function (req, res){
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -42,7 +44,7 @@ exports.login = asyncHandler(async (req, res) => {
   }
 
   sendTokenResponse(user, 200, res);
-});
+}};
 
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
@@ -62,7 +64,8 @@ const sendTokenResponse = (user, statusCode, res) => {
     .json({ success: true, token });
 };
 
-exports.requestPasswordReset = asyncHandler(async (req, res) => {
+exports.requestPasswordReset = function asyncHandler(){
+  return async function (req, res) {
   const user = await User.findOne({ email: req.body.email });
 
   const resetToken = user.getResetPasswordToken();
@@ -77,9 +80,10 @@ exports.requestPasswordReset = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({ success: true });
-});
+}};
 
-exports.confirmPasswordReset = asyncHandler(async (req, res) => {
+exports.confirmPasswordReset = function asyncHandler(){
+  return async function (req, res) {
   const resetToken = crypto
     .createHash("sha256")
     .update(req.params.token)
@@ -96,9 +100,10 @@ exports.confirmPasswordReset = asyncHandler(async (req, res) => {
   await user.save();
 
   sendTokenResponse(user, 200, res);
-});
+}};
 
-exports.verifyEmail = asyncHandler(async (req, res) => {
+exports.verifyEmail = function asyncHandler(){
+  return async function (req, res) {
   const verificationToken = req.params.token;
   
   const user = await User.findOne({
@@ -112,4 +117,4 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
   await user.save();
 
   res.redirect(`${process.env.CLIENT_URL}/login?verified=true`);
-});
+}};

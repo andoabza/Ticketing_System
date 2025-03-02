@@ -6,12 +6,18 @@ const mongoSanitize = require("express-mongo-sanitize");
 const { helmet, securityMiddleware } = require("./middleware/security");
 const { initializeWebSocket } = require("./utils/socket");
 const errorHandler = require("./middleware/error");
-const limiter = require("./middleware/rateLimiter");
+//const limiter = require("./middleware/rateLimiter");
 const routes = require("./routes");
 const logger = require("./utils/logger");
 
 const app = express();
 const server = require("http").createServer(app);
+const { 
+	generalRateLimiter, 
+	authRateLimiter,
+	securityHeaders
+} = require('./middleware/rateLimiter');
+
 
 // Database connection
 mongoose
@@ -30,13 +36,16 @@ app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(helmet());
 app.use(securityMiddleware);
-app.use(limiter);
+//app.use(limiter);
+app.use(securityHeaders);
+app.use(generalRateLimiter);
 
 // WebSocket initialization
 initializeWebSocket(server);
 
 // Routes
 app.use("/api/v1", routes);
+app.use('/api/auth', authRateLimiter);
 
 // Error handling
 app.use(errorHandler);

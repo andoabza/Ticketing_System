@@ -38,4 +38,34 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
+UserSchema.methods = {
+  getSignedJwtToken() {
+    return generateToken.getSignedJwtToken(this._id);
+  },
+
+  getRefreshToken() {
+    return generateToken.getRefreshToken(this._id);
+  },
+
+  getVerificationToken() {
+    const { token, expires } = generateToken.getVerificationToken();
+    this.verificationToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+    this.verificationExpire = expires;
+    return token;
+  },
+
+  getResetPasswordToken() {
+    const { token, expires } = generateToken.getResetPasswordToken();
+    this.resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+    this.resetPasswordExpire = expires;
+    return token;
+  },
+};
+
 module.exports = mongoose.model("User", UserSchema);
