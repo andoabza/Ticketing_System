@@ -44,7 +44,7 @@ const TicketList = ({ user }) => {
         <div key={ticket._id} className="ticket-card">
           <h3>{ticket.title}</h3>
           <p>{ticket.description}</p>
-          <p>Status: {ticket.status}</p>
+	  <p data-status={ticket.status.toLowerCase()}>Status: {ticket.status}</p>
           <p>Created by: {ticket.createdBy.email}</p>
           {ticket.assignedTo && <p>Assigned to: {ticket.assignedTo.email}</p>}
 

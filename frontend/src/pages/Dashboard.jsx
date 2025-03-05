@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import TicketList from "../components/TicketList";
 import TicketForm from "../components/TicketForm";
 import api from "../api";
