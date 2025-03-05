@@ -46,6 +46,7 @@ button {
   border: none;
   border-radius: 4px;
   background-color: var(--primary);
+  margin: 20px 0;
   color: white;
   cursor: pointer;
   transition: opacity 0.2s;
