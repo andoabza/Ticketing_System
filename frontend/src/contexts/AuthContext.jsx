@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       navigate("/dashboard");
     } catch (error) {
-      throw error.response.data.error;
+      return JSON.stringify(error);
     }
   };
 
@@ -43,7 +43,8 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       navigate("/dashboard");
     } catch (error) {
-      throw error.response.data.error;
+      return JSON.stringify(error);
+      
     }
   };
 

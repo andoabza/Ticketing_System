@@ -22,7 +22,7 @@ const Register = () => {
 
   return (
     <div className="auth-container">
-      <h2>Register</h2>
+      <h2>Welcome To Registration.</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
